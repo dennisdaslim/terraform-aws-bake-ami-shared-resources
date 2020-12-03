@@ -30,7 +30,7 @@ resource "aws_iam_role_policy" "codebuild_policy_s3" {
 }
 
 resource "aws_iam_role_policy_attachment" "codebuild_ecr" {
-  role      = "${module.codebuild_role.role_name}"
+  role       = "${module.codebuild_role.role_name}"
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
 }
 

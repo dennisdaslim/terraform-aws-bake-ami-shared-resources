@@ -2,8 +2,16 @@ output "codepipeline_role_arn" {
   value = "${module.codepipeline_role.role_arn}"
 }
 
+output "codepipeline_role_name" {
+  value = "${module.codepipeline_role.role_name}"
+}
+
 output "codebuild_role_arn" {
   value = "${module.codebuild_role.role_arn}"
+}
+
+output "codebuild_role_name" {
+  value = "${module.codebuild_role.role_name}"
 }
 
 output "events_role_arn" {
