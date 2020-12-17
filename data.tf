@@ -954,7 +954,9 @@ data "aws_iam_policy_document" "codepipeline_artifact_bucket_policy_cross_accoun
       type        = "AWS"
     }
 
-    resources = "arn:aws:s3:::${module.codepipeline_artifact_bucket_name.name}/*"
+    resources = [
+      "arn:aws:s3:::${module.codepipeline_artifact_bucket_name.name}/*",
+    ]
   }
 }
 
