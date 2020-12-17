@@ -27,7 +27,7 @@ output "template_instance_security_group" {
 }
 
 output "codepipeline_artifact_bucket" {
-  value = "${aws_s3_bucket.codepipeline_artifact.id}"
+  value = "${aws_s3_bucket.codepipeline_artifact.*.id}"
 }
 
 output "application_binary_bucket" {
