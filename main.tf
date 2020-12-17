@@ -132,7 +132,7 @@ module "codepipeline_artifact_bucket_name" {
 }
 
 resource "aws_s3_bucket" "codepipeline_artifact" {
-  count  = "${var.cross_account_access_list == "" ? 1 : 0}"
+  count  = "${var.cross_account_access_list == [] ? 1 : 0}"
   bucket = "${module.codepipeline_artifact_bucket_name.name}"
   acl    = "private"
 
@@ -169,8 +169,8 @@ resource "aws_s3_bucket" "codepipeline_artifact" {
   }
 }
 
-resource "aws_s3_bucket" "codepipeline_artifact" {
-  count  = "${var.cross_account_access_list != "" ? 1 : 0}"
+resource "aws_s3_bucket" "codepipeline_artifact_cross_account" {
+  count  = "${var.cross_account_access_list != [] ? 1 : 0}"
   bucket = "${module.codepipeline_artifact_bucket_name.name}"
   acl    = "private"
 
