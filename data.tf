@@ -853,6 +853,111 @@ data "aws_iam_policy_document" "codepipeline_artifact_bucket_policy" {
   }
 }
 
+data "aws_iam_policy_document" "codepipeline_artifact_bucket_policy_cross_accounts" {
+  statement {
+    sid    = "DenyAllUnEncryptedHTTPAccess"
+    effect = "Deny"
+
+    principals = {
+      type = "*"
+
+      identifiers = [
+        "*",
+      ]
+    }
+
+    actions = [
+      "s3:*",
+    ]
+
+    resources = [
+      "arn:aws:s3:::${module.codepipeline_artifact_bucket_name.name}/*",
+    ]
+
+    condition = {
+      test     = "Bool"
+      variable = "aws:SecureTransport"
+
+      values = [
+        "false",
+      ]
+    }
+  }
+
+  statement {
+    sid    = "DenyIncorrectEncryptionHeader"
+    effect = "Deny"
+
+    principals = {
+      type = "*"
+
+      identifiers = [
+        "*",
+      ]
+    }
+
+    actions = [
+      "s3:PutObject",
+    ]
+
+    resources = [
+      "arn:aws:s3:::${module.codepipeline_artifact_bucket_name.name}/*",
+    ]
+
+    condition = {
+      test     = "StringNotEquals"
+      variable = "s3:x-amz-server-side-encryption"
+
+      values = [
+        "aws:kms",
+        "AES256",
+      ]
+    }
+  }
+
+  statement {
+    sid    = "DenyUnEncryptedObjectUploads"
+    effect = "Deny"
+
+    principals = {
+      type = "*"
+
+      identifiers = [
+        "*",
+      ]
+    }
+
+    actions = [
+      "s3:PutObject",
+    ]
+
+    resources = [
+      "arn:aws:s3:::${module.codepipeline_artifact_bucket_name.name}/*",
+    ]
+
+    condition = {
+      test     = "Null"
+      variable = "s3:x-amz-server-side-encryption"
+
+      values = [
+        "true",
+      ]
+    }
+  }
+
+  statement {
+    sid    = "AllowCrossAccountAccess"
+    effect = "Allow"
+
+    principals = {
+      identifiers = ["${var.cross_account_access_list}"]
+      type        = "AWS"
+    }
+
+    resources = "arn:aws:s3:::${module.codepipeline_artifact_bucket_name.name}/*"
+  }
+}
+
 data "aws_iam_policy_document" "codepipeline_codebuild" {
   statement {
     effect = "Allow"

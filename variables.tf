@@ -51,3 +51,13 @@ variable "logging_bucket" {
   description = "The name of the bucket that will receive the log objects of all S3 resources in this module"
   type        = "string"
 }
+
+variable "bucket_policy" {
+  description = "The "
+}
+
+variable "cross_account_access_list" {
+  description = "List of cross account id(s) that have access to CodePipeline bucket"
+  default     = []
+  type        = "list"
+}

@@ -132,6 +132,7 @@ module "codepipeline_artifact_bucket_name" {
 }
 
 resource "aws_s3_bucket" "codepipeline_artifact" {
+  count  = "${var.cross_account_access_list == "" ? 1 : 0}"
   bucket = "${module.codepipeline_artifact_bucket_name.name}"
   acl    = "private"
 
@@ -149,6 +150,44 @@ resource "aws_s3_bucket" "codepipeline_artifact" {
   }
 
   policy = "${data.aws_iam_policy_document.codepipeline_artifact_bucket_policy.json}"
+
+  versioning {
+    enabled = "true"
+  }
+
+  lifecycle_rule {
+    enabled                                = "true"
+    abort_incomplete_multipart_upload_days = "1"
+  }
+
+  tags {
+    Name          = "${module.codepipeline_artifact_bucket_name.name}"
+    ProductDomain = "${var.product_domain}"
+    Description   = "CodePipeline artifact bucket for ${var.product_domain} services"
+    Environment   = "management"
+    ManagedBy     = "Terraform"
+  }
+}
+
+resource "aws_s3_bucket" "codepipeline_artifact" {
+  count  = "${var.cross_account_access_list != "" ? 1 : 0}"
+  bucket = "${module.codepipeline_artifact_bucket_name.name}"
+  acl    = "private"
+
+  logging {
+    target_bucket = "${var.logging_bucket}"
+    target_prefix = "${module.codepipeline_artifact_bucket_name.name}/"
+  }
+
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        sse_algorithm = "AES256"
+      }
+    }
+  }
+
+  policy = "${data.aws_iam_policy_document.codepipeline_artifact_bucket_policy_cross_accounts.json}"
 
   versioning {
     enabled = "true"
