@@ -52,10 +52,6 @@ variable "logging_bucket" {
   type        = "string"
 }
 
-variable "bucket_policy" {
-  description = "The "
-}
-
 variable "cross_account_access_list" {
   description = "List of cross account id(s) that have access to CodePipeline bucket"
   default     = []
